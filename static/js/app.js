@@ -5,6 +5,16 @@ const dataPromise = d3.json(url);
 // console.log("Data Promise: ", dataPromise);
 
 let dropdownMenu = d3.select("#selDataset")
+
+function displayMetadata(metadata) {
+  let panelBodyElement = d3.select(".panel-body");
+  panelBodyElement.html('');
+  Object.entries(metadata).forEach(([key, value]) => {
+    console.log(`${key} ${value}`);
+    panelBodyElement.append("p").text(`${key}: ${value}`)
+  });
+}
+
 d3.json(url).then(function (data) {
   // console.log(data);
   let samples = {};
@@ -50,7 +60,7 @@ d3.json(url).then(function (data) {
       color: 'rgba(255,153,51,0.6)'
     }
   }];
-
+//iniital bar
   let barOne = {
     title: `<b>Top 10 OTUs for ID: 940</b>`
   };
@@ -60,7 +70,7 @@ d3.json(url).then(function (data) {
   let bubbIds = initData.otu_ids
   let bubbValues = initData.sample_values
   let bubbLabels = initData.otu_labels
-
+//initial bubble chart
   let initBubble = [{
     x: bubbIds,
     y: bubbValues,
@@ -78,14 +88,10 @@ d3.json(url).then(function (data) {
   };
 
   Plotly.newPlot('bubble', initBubble, bubbLayout);
-  
-  let dem940 = metadata['940'];
-  console.log(dem940)
 
-  // let dem_info = d3.select(".panel-body").append("ul");
+  // initial demographics box
 
-  // dem_info.text(${dem940});
-  
+  displayMetadata(metadata['940']);
 
   //when a new id is selected, run function
   function optionChanged() {
@@ -140,6 +146,9 @@ d3.json(url).then(function (data) {
     };
 
     Plotly.newPlot('bubble', bubbleData, bubbleLayout)
+    
+    displayMetadata(metadata[selectedValue]);
+
   };
   d3.selectAll("#selDataset").on("change", optionChanged);
 

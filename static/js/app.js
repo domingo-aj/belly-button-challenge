@@ -39,17 +39,55 @@ d3.json(url).then(function (data) {
   });
 
   //console.log(yValues);
-
-  let barData = [{
+  // set display data (bar, bubble, demgraphics for 940)
+  let initBar = [{
     x: filteredValues,
     y: yValues,
     text: filteredLabels,
     type: 'bar',
-    orientation: 'h'
+    orientation: 'h',
+    marker: {
+      color: 'rgba(255,153,51,0.6)'
+    }
   }];
 
-  Plotly.newPlot("bar", barData);
+  let barOne = {
+    title: `<b>Top 10 OTUs for ID: 940</b>`
+  };
 
+  Plotly.newPlot("bar", initBar, barOne);
+
+  let bubbIds = initData.otu_ids
+  let bubbValues = initData.sample_values
+  let bubbLabels = initData.otu_labels
+
+  let initBubble = [{
+    x: bubbIds,
+    y: bubbValues,
+    mode: 'markers',
+    marker: {
+      color: bubbIds,
+      size: bubbValues,
+      colorscale: 'Picnic'
+    },
+    text: bubbLabels
+  }];
+
+  let bubbLayout = {
+    title: `<b> Summary of All OTUs for ID: 940</b>`
+  };
+
+  Plotly.newPlot('bubble', initBubble, bubbLayout);
+  
+  let dem940 = metadata['940'];
+  console.log(dem940)
+
+  // let dem_info = d3.select(".panel-body").append("ul");
+
+  // dem_info.text(${dem940});
+  
+
+  //when a new id is selected, run function
   function optionChanged() {
     let selectedValue = this.value;
     let sample = samples[selectedValue];
@@ -73,10 +111,17 @@ d3.json(url).then(function (data) {
       y: new_otu,
       text: bar_labels,
       type: 'bar',
-      orientation: 'h'
+      orientation: 'h',
+      marker: {
+        color: 'rgba(255,153,51,0.6)'
+      }
     }];
-   
-    Plotly.newPlot("bar", barData);
+
+    let barLayout = {
+      title: `<b>Top 10 OTUs for ID: ${selectedValue}</b>`
+    };
+
+    Plotly.newPlot("bar", barData, barLayout);
 
     let bubbleData = [{
       x: otu_ids,
@@ -85,12 +130,17 @@ d3.json(url).then(function (data) {
       marker: {
         color: otu_ids,
         size: sample_values,
+        colorscale: 'Picnic'
       },
       text: otu_labels
     }];
 
-    Plotly.newPlot('bubble', bubbleData)
-  };  
+    let bubbleLayout = {
+      title: `<b> Summary of All OTUs for ID: ${selectedValue}</b>`
+    };
+
+    Plotly.newPlot('bubble', bubbleData, bubbleLayout)
+  };
   d3.selectAll("#selDataset").on("change", optionChanged);
 
-})
+});
